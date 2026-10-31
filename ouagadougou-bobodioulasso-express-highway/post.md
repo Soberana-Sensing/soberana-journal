@@ -828,7 +828,7 @@ To conclude, it is worth pointing out that this analysis shows land-surface chan
 
 
 
-![note]Please contact us at hello@soberana-sensing.org if you have something to add, or questions, or anything really! We are happy to connect.
+![note] If you would like to contribute to this journal, please visit [github.com/Soberana-Sensing/soberana-journal](https://github.com/Soberana-Sensing/soberana-journal) and open a pull request. We are happy to collaborate!
 
 # Resources
 

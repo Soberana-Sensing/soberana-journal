@@ -26,6 +26,18 @@ Anyone is welcome to propose edits or new posts through a pull request. Direct
 pushes to `main` are blocked; all changes go through PRs so they can be reviewed
 before publication.
 
+To propose a change:
+
+1. Create a new branch for your contribution (if you cannot push branches to
+   this repository, fork it first and create the branch on your fork).
+2. Make your edit: for a new post, create a folder named after your post's URL
+   slug and add a `post.md` inside it; for an edit, modify the existing
+   `post.md`.
+3. Commit and push your branch, then open a pull request against `main` and
+   describe what you changed and why.
+4. A reviewer will look at your PR. Once it is merged, the change appears on
+   the website at the next deploy.
+
 ## License
 
 All content in this repository is licensed under the
