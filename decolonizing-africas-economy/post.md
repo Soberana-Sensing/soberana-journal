@@ -48,6 +48,8 @@ As discussed, countries today still depend on US dollar reserves for their impor
 
 ![footnote] ¹Imperialism as defined in [modern frameworks](https://www.tandfonline.com/doi/full/10.1080/21598282.2015.1031943) where it is understood as the intertwined political and economic project through which the imperial state and its allied institutions secure and expand the conditions for global capital accumulation. Economically, it operates through investments, production, trade, and market expansion to penetrate existing markets, open new ones, exploit labour, extract surplus value, and secure raw materials. Politically, it is carried out by the imperial state and its agencies—including international financial and security institutions such as the World Bank—which shape the institutional, regulatory, and geopolitical environment to “pave the way” for capital. Social inequalities, unemployment, poverty, and environmental degradation are not goals of this project but are treated as structural, often unavoidable side‑effects of development that must be managed in the interests of security and continued accumulation.
 
+![note] If you would like to contribute to this journal, please visit [github.com/Soberana-Sensing/soberana-journal](https://github.com/Soberana-Sensing/soberana-journal) and open a pull request. We are happy to collaborate!
+
 # Resources
 
 - _Our work in Africa_. (2024, February). UNEP.org. Retrieved October 6, 2026, from https://www.unep.org/regions/africa/our-work-africa
