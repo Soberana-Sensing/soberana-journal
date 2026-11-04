@@ -7,7 +7,7 @@ tags: [beginner, guide, remote-sensing, javascript]
 
 [[toc]]
 
-![note] This is an introductory guide that uses [Google Earth Engine (GEE)](https://code.earthengine.google.com/) and the [Copernicus Browser](https://browser.dataspace.copernicus.eu). Code used in GEE will appear as a drop-down menu in order to not bother those who are not interested in that. Tools used in Copernicus Browser are mentioned in-text.
+![note] This is an introductory guide that uses [Google Earth Engine (GEE)](https://code.earthengine.google.com/) and the [Copernicus Browser](https://browser.dataspace.copernicus.eu). Code used in GEE will appear as a drop-down menu. Tools used in Copernicus Browser are mentioned in-text.
 
 # Introduction
 
@@ -61,7 +61,7 @@ The line drawn on the image above can be exported as a `GeoJSON` file to be used
 
 # Sentinel-2
 
-In this guide we monitor the expressway construction from space using Sentinel-2, a satellite mission of European Copernicus that repeatedly photographs the same spot on Earth roughly every five days. [Sentinel-2 records reflected energy in visible, near-infrared, red-edge, and short-wave infrared wavelengths](https://gisgeography.com/sentinel-2-bands-combinations/). These different slices of the electromagnetic spectrum are also called _spectral bands_. 
+In this guide we monitor the expressway construction from space using Sentinel-2, a satellite mission of European Copernicus that repeatedly photographs the same spot on Earth roughly every five days. [Sentinel-2 records reflected radiation in visible, near-infrared, red-edge, and short-wave infrared wavelengths](https://gisgeography.com/sentinel-2-bands-combinations/). These different slices of the electromagnetic spectrum are commonly called _spectral bands_. 
 
 ## Bands used in this analysis
 
@@ -75,15 +75,19 @@ B8  = near-infrared (NIR)
 B11 = short-wave infrared 1  (SWIR1)
 ```
 
-Each type of surface absorbs and reflects light differently; for example, healthy vegetation absorbs much of the red light used in photosynthesis but reflects strongly the near-infrared light. Bare and dry soil often reflects relatively strongly in visible and short-wave infrared wavelengths. Whereas water and moisture-rich vegetation absorb short-wave infrared, so they often appear dark in SWIR bands.
+Different surfaces absorb and reflect sunlight differently across the electromagnetic spectrum. These differences allow us to distinguish vegetation, soil, water, and built-up areas in satellite images. For instance, healthy vegetation absorbs much of the red light (band B4) for photosynthesis, while reflecting strongly in the near-infrared (NIR, band B8). This strong NIR reflection is one of the most distinctive spectral characteristics of healthy, leafy vegetation. Bare, dry soil usually reflects relatively more light in the visible and short-wave infrared (SWIR) bands than vegetation does. In contrast, water absorbs most incoming radiation, especially in the NIR and SWIR regions, which is why clear water has a very low reflectance in those parts of the spectrum.
 
-Images built from B2, B3 and B4 (RGB) are also called _true color_ images. Figure 2 shows a `.gif` created using one true color (RGB) image per month, spanning from October 2025 to October 2026, of a 20 km section of the expressway west of Tanghin-Dassouri.
+Images built from B2, B3, and B4 (RGB) are called _true-color_ images, because they show Earth in approximately the colors we would see with our own eyes. In such images, healthy vegetation usually appears green, bare soil often appears brown or grey, and water appears dark blue to nearly black. Figure 2 shows a `.gif` created from one true-color (RGB) image per month, spanning October 2025 to October 2026, for a 20 km section of the expressway west of Tanghin-Dassouri. Examining this time series, we can observe changes in the landscape over the year.
 
 ![true_color_aoi](/20km_section_near_Tanghin-Dassouri/monthly_true_color_section_road_20cc_oct25-oct26.gif "Figure 2. Roughly 20 km section of the expressway, west of Tanghin-Dassouri. True color (RGB) Sentinel-2 images from October 2025 to October 2026. `GIF` generated using the _create timelapse animation_ tool from Copernicus Browser.")
 
-This result already is quite informative. According to reports, the _clearing_ of the expressway took place between December 2025 and February 2026. The timelapse above is consistent with that; at least for this 20 km section west of Tanghin-Dassouri. The image on 29 of December 2025 shows the clearing beginning, and by 02 of February 2026, we can see this entire section has been cleared. Then, the image from 23 of April 2026 shows what seems to be the beginning of the _terracing_ operation, although this operation seems to pause by the 11 of August 2026. We see no signs of the completion of _terracing_ and/or beginning of _asphalting_.
+This result already is quite informative. According to available reports, _clearing_ of the expressway corridor took place between December 2025 and February 2026. The timelapse is consistent with the reported timeline, at least for this 20 km section west of Tanghin-Dassouri. 
 
-Even though we can draw a conclusion from the timelapse above regarding the construction of the expressway, we would also like to introduce different band combinations apart from the RGB image; and touch upon how to analyse this data programmatically.
+In the image acquired on 29 December 2025, the first signs of clearing are visible. By 2 February 2026, the entire section appears to have been cleared of vegetation: the formerly green vegetated corridor has largely been replaced by grey and beige tones, consistent with exposed soil and construction activity. 
+
+From the image acquired on 23 April 2026 onwards, brown areas become visible along parts of the corridor. These changes are consistent with the possible beginning of _terracing_ operations, but the true-color imagery alone does not allow us to confirm this interpretation. The activity appears to pause by 11 August 2026, and by the end of the timelapse there are no clear signs that _terracing_ has been completed or that _asphalting_ has begun.
+
+Although this timelapse already allows us to draw useful conclusions about the progress of the expressway construction, we will also introduce band combinations other than the RGB true-color image and show how these data can be analysed programmatically.
 
 ## Indices
 
