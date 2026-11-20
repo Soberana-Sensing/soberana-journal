@@ -79,8 +79,6 @@ We start by overlaying the ten delimited TI polygons downloaded from FUNAI's Geo
 
 # Discussion
 
-Explain what a company needs to do after declaration and ratification; when it becomes illegal to continue (and grow) their operations in the land, and when its bad-faith.
-
 MapBiomas identifies land cover, not ownership, tenure or who carries out the farming. The inference is stronger in territories where the communities occupy only a small fraction of the polygon. In Guyraroká, Iguatemipegua I and Dourados-Amambaipeguá I, the communities occupied between 0.24% and 8.26% of the delimited area in 2020, while agriculture expanded substantially across the full polygon. In those cases, the most plausible reading is that the cropland lies mainly in the area outside community occupation.
 
 The LULC analysis shows that agricultural expansion inside the territories keeps growing even after ratification cases. In 2005, when the Ñhanderu Marangatu territory was ratified, MapBiomas classified 38 ha of agricultural land. By 2025, that area recorded 725 ha. The territory therefore illustrates the gap between formal recognition of a boundary and effective control of the land inside it. While pasture had a significant decrease between 2005 and 2018, it increased again later. [ADD SENTENCE AND SOURCE OF LAND LEASE IN NHANDERU MARANGATU]
@@ -95,7 +93,7 @@ The LULC data cannot identify responsibility for each hectare. But it does show 
 - Agência Brasil. (2026, October 30). Governo cria força-tarefa para apurar ataques a indígenas no MS. Poder360 (republished from Agência Brasil). https://www.poder360.com.br/poder-brasil/governo-cria-forca-tarefa-para-apurar-ataques-a-indigenas-no-ms/
 - Balduino, I. (2026, October 29). Indígenas de MS denunciam casos de violência e ameaças após eleição. Agência Brasil. https://agenciabrasil.ebc.com.br/direitos-humanos/noticia/2026-10/indigenas-de-ms-denunciam-casos-de-violencia-e-ameacas-apos-eleicao
 - Brasil. (1988). _Constituição da República Federativa do Brasil de 1988, art. 231_. https://normas.leg.br/?urn=urn:lex:br:federal:constituicao:1988-10-05;1988!art231
-- Brasil. (1973, December 19). Lei nº 6.001, de 19 de dezembro de 1973 – Estatuto do Índio, art. 18_. https://www.planalto.gov.br/ccivil03/leis/l6001.htm
+- Brasil. (1973, December 19). Lei nº 6.001, de 19 de dezembro de 1973 – Estatuto do Índio, art. 18_. https://www.planalto.gov.br/ccivil_03/leis/l6001.htm
 - Cimi – Conselho Indigenista Missionário. (n.d.). Violência contra os povos indígenas no Brasil: edições anteriores (2009–2026). https://cimi.org.br/observatorio-da-violencia/edicoes-anteriores/
 - Fundação Nacional dos Povos Indígenas. (n.d.). Fases do processo administrativo de demarcação de terras indígenas. https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/demarcacao-de-terras-indigenas/fases-do-processo-administrativo
 - Fundação Nacional dos Povos Indígenas. (n.d.). Terras Indígenas – polígonos por portarias (layer Funai:tis_poligonais_portarias). GeoServer Funai, WFS request filtered to Mato Grosso do Sul, retrieved 12 November 2026. https://geoserver.funai.gov.br/geoserver/Funai/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=Funai:tis_poligonais_portarias&outputFormat=application/json&srsName=EPSG:4674&CQL_FILTER=uf_sigla%3D%27MS%27
