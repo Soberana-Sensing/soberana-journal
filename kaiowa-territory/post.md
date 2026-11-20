@@ -1,124 +1,108 @@
 ---
-published: 2026-11-12
+published: 2026-11-19
 title: Guarani-Kaiowá Territories in Mato Grosso do Sul Under Pressure, 2008–2025
 excerpt: A Python workflow combining CIMI reports, FUNAI territory polygons and MapBiomas land-cover data to trace violence and land-cover change inside the Guarani-Kaiowá territories of Mato Grosso do Sul.
-tags: [intermediate, guide, python, remote-sensing]
+tags: [intermediate, python, remote-sensing]
 ---
 
-![note] This is an intermediary reproducible guide that uses Python to programmatically extract the case records from the CIMI reports, cross-reference them with the FUNAI territory polygons, and query the MapBiomas land-cover classification inside those polygons. The entire code can be found in our [Soberana Land Rights Monitor](https://github.com/Soberana-Sensing/soberana-land-rights-monitor/tree/main/cimi).
+![note] This is an intermediary reproducible work that uses Python to programmatically extract the case records from the CIMI reports, cross-reference them with the FUNAI territory polygons, and query the MapBiomas land-cover classification inside those polygons. The entire code can be found in our [Soberana Land Rights Monitor](https://github.com/Soberana-Sensing/soberana-land-rights-monitor/tree/main/cimi).
 
 [[toc]]
 
 # Introduction
 
-After the second round of the Brazilian presidential election on 25 October 2026, the Guarani-Kaiowá Indigenous communities in Mato Grosso do Sul (MS) reported a wave of violence: [threats to poison the water of the Sassoró village in Tacuru](https://g1.globo.com/ms/mato-grosso-do-sul/noticia/2026/11/01/ataque-a-indigenas-em-ms-o-que-se-sabe-sobre-ameacas-de-envenenamento-da-agua-em-aldeia.ghtml), [death threats](https://www.poder360.com.br/poder-brasil/governo-cria-forca-tarefa-para-apurar-ataques-a-indigenas-no-ms/), [hit-and-runs](https://agenciabrasil.ebc.com.br/direitos-humanos/noticia/2026-10/indigenas-de-ms-denunciam-casos-de-violencia-e-ameacas-apos-eleicao), and the [burning of the home and sacred objects of a 90-year-old spiritual leader in Jaguapiré](https://agenciabrasil.ebc.com.br/radioagencia-nacional/direitos-humanos/audio/2026-10/ms-indigenas-denunciam-ameacas-e-violencia-apos-resultado-de-eleicao). APIB, the national Indigenous umbrella body, had counted [more than 30 cases](https://www.poder360.com.br/poder-brasil/governo-cria-forca-tarefa-para-apurar-ataques-a-indigenas-no-ms/) of threats, attacks and hit-and-runs against Indigenous people in the state related to the 2026 election by the end of October. [Federal prosecutors opened investigations](https://www.mpf.mp.br/o-mpf/unidades/pr-ms/noticias/mpf-abre-investigacoes-sobre-onda-de-violencia-e-ataques-contra-comunidades-indigenas-em-mato-grosso-do-sul) and the [National Force was deployed to three villages](https://g1.globo.com/ms/mato-grosso-do-sul/noticia/2026/10/30/forca-nacional-faz-patrulhamento-em-aldeias-indigenas-de-ms-apos-ameacas-de-envenenamento-da-agua.ghtml). This recent surge of violence prompted us to do a research on the land-cover transformation inside the Guarani-Kaiowá territories within the MS state.
+After the second round of the Brazilian presidential election on 25 October 2026, the Guarani-Kaiowá Indigenous communities in Mato Grosso do Sul (MS) reported a wave of violence: [threats to poison the water of the Sassoró village in Tacuru](https://g1.globo.com/ms/mato-grosso-do-sul/noticia/2026/11/01/ataque-a-indigenas-em-ms-o-que-se-sabe-sobre-ameacas-de-envenenamento-da-agua-em-aldeia.ghtml), [death threats](https://www.poder360.com.br/poder-brasil/governo-cria-forca-tarefa-para-apurar-ataques-a-indigenas-no-ms/), [hit-and-runs](https://agenciabrasil.ebc.com.br/direitos-humanos/noticia/2026-10/indigenas-de-ms-denunciam-casos-de-violencia-e-ameacas-apos-eleicao), and the [burning of the home and sacred objects of a 90-year-old spiritual leader in Jaguapiré](https://agenciabrasil.ebc.com.br/radioagencia-nacional/direitos-humanos/audio/2026-10/ms-indigenas-denunciam-ameacas-e-violencia-apos-resultado-de-eleicao). The Articulation of Indigenous Peoples of Brazil (APIB) had counted [more than 30 cases](https://www.poder360.com.br/poder-brasil/governo-cria-forca-tarefa-para-apurar-ataques-a-indigenas-no-ms/) of threats, attacks and hit-and-runs against Indigenous people in the state related to the 2026 election by the end of October. [Federal prosecutors opened investigations](https://www.mpf.mp.br/o-mpf/unidades/pr-ms/noticias/mpf-abre-investigacoes-sobre-onda-de-violencia-e-ataques-contra-comunidades-indigenas-em-mato-grosso-do-sul) and the [National Force was deployed to three villages](https://g1.globo.com/ms/mato-grosso-do-sul/noticia/2026/10/30/forca-nacional-faz-patrulhamento-em-aldeias-indigenas-de-ms-apos-ameacas-de-envenenamento-da-agua.ghtml). This recent surge of violence prompted the Soberana team to investigate how the land use and land cover (LULC) evolved inside the Guarani-Kaiowá territories within the MS state.
 
-In this analysis we used three sources of information:
+This analysis is primarily based on:
 
-1. **CIMI reports (2008–2025)**: the annual [_Violence against Indigenous People in Brazil_](https://cimi.org.br/observatorio-da-violencia/edicoes-anteriores/) series, published by the missionary body of the Catholic Church in Brazil (CIMI). Each edition records, case by case and territory by territory, the attacks reported in the previous year.
-2. **Polygons with the limits of the indigenous territories in the state of MS**, from [FUNAI](https://www.gov.br/funai), Brazil's federal Indigenous agency, downloaded as a single [WFS request](https://geoserver.funai.gov.br/geoserver/Funai/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=Funai:tis_poligonais_portarias&outputFormat=application/json&srsName=EPSG:4674&CQL_FILTER=uf_sigla%3D%27MS%27) filtered to the state of Mato Grosso do Sul.
-3. **MapBiomas land use and land cover**, [collection 11](https://brasil.mapbiomas.org/colecoes-mapbiomas), which classifies every 30 m pixel of Brazil once a year from 1985 to 2025.
+1. **CIMI reports (2009–2026)**: the annual [_Violence against Indigenous People in Brazil_](https://cimi.org.br/observatorio-da-violencia/edicoes-anteriores/) series, published by the missionary body of the Catholic Church in Brazil (CIMI). Each edition records, case by case and territory by territory, the attacks reported in the previous year.
+2. **Geospatial data of the indigenous territories**, from [FUNAI](https://www.gov.br/funai), Brazil's federal Indigenous agency, downloaded as a single [WFS request](https://en.wikipedia.org/wiki/Web_Feature_Service) from [FUNAI's GeoServer](https://geoserver.funai.gov.br/geoserver/Funai/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=Funai:tis_poligonais_portarias&outputFormat=application/json&srsName=EPSG:4674&CQL_FILTER=uf_sigla%3D%27MS%27).
+3. **MapBiomas land use and land cover (LULC)**, [collection 11](https://brasil.mapbiomas.org/colecoes-mapbiomas), which classifies the land of Brazil once a year from 1985 to 2025, with a spatial resolution of 30 m.
 
-CIMI documents the pressure on each territory, year after year; while FUNAI's geospatial inventory gives information on the location of each territory and how far the state has gone in recognising them. 
+# Legal framework
 
-## What CIMI records
+Before diving into the report it is important to mention to the reader that an Indigenous land (Terra Indígena, TI) is an area the Brazilian State formally recognises as traditionally occupied by an Indigenous people. The 1988 Constitution recognises the Indigenous right to traditionally occupied land as an [original right, held before any private title existed](https://normas.leg.br/?urn=urn:lex:br:federal:constituicao:1988-10-05;1988!art231). This recognition follows the [fixed administrative sequence](https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/demarcacao-de-terras-indigenas/fases-do-processo-administrativo) described in the table below.
 
-In this study we focus on the first chapter of the CIMI report, which covers **violence against Indigenous heritage**: for example, disputes over land, delays in regularisation, and the use and degradation of natural resources. Between the 2008 and 2025 editions, 44 different Guarani-Kaiowá territories (pluts two encampments) in Mato Grosso do Sul are mentioned in their Chapter 1. 
-
-*Figure 1* summarises 209 cases, showing a steep increase in violence related to land-right conflicts and posessory invasions.
-
-![CIMI-recorded cases per Guarani-Kaiowá territory and data year](figures/cimi_kaiowa_conflict_heatmap.png "FIGURE 1. Cases involving Guarani-Kaiowá territories in Mato Grosso do Sul, by CIMI data year (2008–2025). The colour gives the conflict type CIMI assigns to the cases of that territory-year: disputes over territorial rights (blue), invasions of possession, illegal exploitation of natural resources and damage to property (brown), and omission and slowness in land regularisation (cyan). The number counts the cases; grey marks territory-years with no recorded case.")
-
-The reports also record, although sparsely, how much of the delimited area the community actually holds. *Figure 2* shows their findings from the 2020 edition.
-
-![Share of each delimited territory the community actually occupies](figures/cimi_kaiowa_occupation_share.png "FIGURE 2. Share of each delimited territory the community actually occupies, as CIMI reports it in its 2020 edition, the only one with the complete per-territory list. The annotation gives the occupied area within the total.")
-
-The spread is wide: the community of Ñande Ru Marangatu holds about 5,400 ha of its 9,317 ha delimited territory (57.96%), while Iguatemipegua I holds 98 ha of 41,571 ha (0.24%). 
-
-## What FUNAI registers
-
-Each polygon in FUNAI's inventory carries a status field recording how far the territory has advanced through the administrative recognition process. The five stages, from weakest to strongest legal footing are as follows:
 
 | Status | What it means | Practical legal strength |
 | --- | --- | --- |
 | **Em estudo** (in study) | FUNAI is conducting anthropological, historical, land-tenure, cartographic and environmental studies to identify and delimit the Indigenous territory. | Weakest formal stage; the proposed perimeter is still under technical analysis and can change. |
 | **Delimitada** (delimited) | The studies are complete and approved by FUNAI's presidency; the proposed limits are published in the federal and state official gazettes. | A formal proposed boundary exists, but it is not yet a presidentially declared Indigenous land. |
-| **Declarada** (declared) | The Ministry of Justice reviews the case and, if appropriate, declares the limits and orders physical demarcation through a portaria in the Diário Oficial da União. | Stronger: the State has formally recognised the limits and ordered demarcation. |
-| **Homologada** (homologated) | The materialised, georeferenced boundaries are published by presidential decree; the area is thereby constituted as a Terra Indígena. | Very strong: this is the decisive federal recognition of the TI's boundaries. |
-| **Regularizada** (regularized) | After homologation, FUNAI helps the Secretariat of Federal Patrimony (SPU) register the area in the property registry and in SPU records. | Strongest administrative completion: the homologated territory has been formally registered. |
+| **Declarada** (declared) | The Minister of Justice reviews the case and, if appropriate, declares the limits and orders physical demarcation through a *portaria* (decree) in the *Diário Oficial da União*. | The State has formally recognised the boundaries and ordered demarcation. |
+| **Homologada** (ratified) | The materialised, georeferenced boundaries are published by presidential decree; the area is thereby constituted as a Terra Indígena (TI). | This is the decisive federal recognition of the TIs boundaries. |
+| **Regularizada** (regularised) | After ratification, FUNAI helps the Secretariat of Federal Patrimony (SPU) register the area in the property registry and in SPU records. | Strongest administrative completion: the ratified territory has been formally registered. |
 
-Note that a territory only moves from declared to homologated by presidential decree. CIMI also records how many territories were homologated by each president in Brasil. *Figure 3* reproduces that table from their latest report.
+Non-Indigenous occupants of a ratified TI are [legally required to leave](https://www6g.senado.gov.br/apem/data/data/PROJ/71979.html). However, removal may be delayed until compensation has been paid for improvements made in good faith. Let is be noted that a territory only moves from declared to ratified by presidential decree.  CIMI's yearly report records the amount of TIs ratified per presidential term since 1985, shown in **Figure 1**.
 
-![Number of Indigenous territories homologated per presidential administration](figures/screenshot_homologated_table_cimi_2026.png "FIGURE 3. Number of Indigenous territories homologated per presidential administration in Brazil, with the government period, number of homologations and annual average, as compiled in CIMI's 2025 report. Data run to November 2025. The zero under Jair Bolsonaro (2019–2022) is highlighted in yellow.")
+![Number of Indigenous territories ratified per presidential administration](figures/screenshot_homologated_table_cimi_2026.png "FIGURE 1. Number of Indigenous territories ratified per presidential administration in Brazil, with the government period, number of homologations and annual average, as compiled in CIMI's 2025 report.")
 
-It's important to note that:
+# Areas of interest
 
-1. Of the 46 territory labels in *Figure 1*, 20 match a polygon in FUNAI's data. Three of those labels name a reserve or municipality, so the match means "in or around".
-2. FUNAI's download holds 25 polygons with Guarani-Kaiowá in the ethnicity field (23 single-label, 2 mixed). 11 have no Chapter I case attributed to the Kaiowá; some appear elsewhere in the reports.
-3. Of the 20 CIMI labels with a polygon, 14 are Kaiowá in FUNAI, 5 are Nhandeva or Nhandeva+Terena (Cerrito, Dourados, Porto Lindo, Ypoi/Triunfo, Yvy Katu), and one is Guaraní (Dourados-Amambaipeguá I). Two further inventory territories, Sombrerito and Potrero Guaçu, are Nhandeva in FUNAI.
+CIMI's 2020 report recorded the area the indigenous community actually occupies within the Indigenous land as delimited by FUNAI for 10 distinct territories, shown in **Figure 2**. The figure highlights a large disparity in occupied land. The community of Ñande Ru Marangatu inhabited approximately 58% of their delimited territory in 2020, while in Iguatemipegua I and Guyraroka, they occupied less than 0.5% of the land. 
 
-## Ten focus territories
+![Share of each delimited territory the community actually occupies](figures/cimi_kaiowa_occupation_share.png "FIGURE 2. Share of each delimited territory the community actually occupies, as CIMI reports it in its 2020 edition.")
 
-For the land-cover analysis we take every territory in *Figure 2*, the ten that CIMI lists with an occupied share in its 2020 edition: Arroio Korá, Dourados-Amambaipeguá I, Guyraroká, Iguatemipegua I, Jatayvary, Ñande Ru Marangatu, Panambi–Lagoa Rica, Potrero Guaçu, Sombrerito and Taquara. The table below summarises their statistics, including their current legal stage, according to FUNAI's data.
+**Figure 3** showcases all Guarani-Kaiowá territories, within the state of Mato Grosso do Sul, according to FUNAI's geospatial data; the 10 we are focusing on are the ones presented in **Figure 2** and they are highlighted in blue.
 
-| Territory | Municipality | Area (ha) | First legal act | Stage today | Occupied (2020) |
-| --- | --- | --- | --- | --- | --- |
-| Arroio Korá | Paranhos | 7,175 | Delimited, 17 Aug 2004 | Homologada | 4,000 ha (55.7%) |
-| Dourados-Amambaipeguá I | Amambai, Dourados and Naviraí | 55,600 | Delimited, 12 May 2016 | Delimitada | 4,594 ha (8.26%) |
-| Guyraroká | Caarapó | 11,440 | Delimited, 12 Aug 2004 | Declarada | 50 ha (0.44%) |
-| Iguatemipegua I | Iguatemi | 41,571 | Delimited, 7 Jan 2013 | Delimitada | 98 ha (0.24%) |
-| Jatayvary | Ponta Porã | 8,800 | Delimited, 1 Sep 2005 | Declarada | 108 ha (1.23%) |
-| Ñande Ru Marangatu | Antônio João | 9,317 | Declared, 30 Oct 2002 | Homologada | 5,400 ha (57.96%) |
-| Panambi–Lagoa Rica | Douradina and Itaporã | 12,196 | Delimited, 9 Dec 2011 | Delimitada | 390 ha (3.2%) |
-| Potrero Guaçu | Paranhos | 4,025 | Declared, 13 Apr 2000 | Declarada | 1,000 ha (24.84%) |
-| Sombrerito | Sete Quedas | 12,608 | Delimited, 4 Jul 2006 | Declarada | 600 ha (4.76%) |
-| Taquara | Juti | 9,700 | Delimited, 2 Dec 2005 | Declarada | 1,881 ha (19.4%) |
+![FUNAI territories in the inventory over Mato Grosso do Sul](figures/funai_kaiowa_ms_map.png "FIGURE 3. The Guarani-Kaiowá territories in FUNAI's inventory for Mato Grosso do Sul. The ten territories analysed in the next section are highlighted in blue.")
 
-*Figure 4* below showcases all Guarani-Kaiowá territories according to FUNAI's geospatial data, the 10 we are going to focus are highlighted in blue.
+The first chapter of each CIMI yearly report covers **violence against Indigenous heritage**: for example, disputes over land, delays in regularisation, and the use and degradation of natural resources. **Figure 4** summarises all cases across our areas of interest between 2008 and 2025. The figure shows a steep increase in violence related to land-right conflicts (dark blue) and possessory invasions (brown) in the past decade.
 
-![FUNAI territories in the inventory over Mato Grosso do Sul](figures/funai_kaiowa_ms_map.png "FIGURE 4. The 28 territories in FUNAI's inventory for Mato Grosso do Sul, over the state boundary. The ten territories analysed in the next section are highlighted in blue.")
+![CIMI-recorded cases per Guarani-Kaiowá territory and data year](figures/cimi_kaiowa_conflict_heatmap_focus_territories.png "FIGURE 4. Cases by CIMI data year (2008–2025). The colour indicates the conflict type CIMI assigns to each case: disputes over territorial rights (dark blue), invasions of possession, illegal exploitation of natural resources and damage to property (brown), and omission and slowness in land regularisation (cyan). The number counts the cases in each territory-year.")
 
-# Land cover inside the ten territories
+# Land use and land cover (LULC) analysis
 
-To see what the disputes look like on the ground, we crossed the FUNAI polygons with MapBiomas collection 11. For each of the ten territories we grouped MapBiomas' 33 legend classes into the following six: native vegetation, pasture, agriculture (soy, cane, rice, cotton and other temporary and perennial crops), mosaic of uses, forest plantation and other non-vegetated areas; plus water and pixels MapBiomas does not classify. The mosaic of uses class marks land where farming or grazing dominates in a patchwork of different uses: typically smallholder properties where crop fields, pasture and residual native vegetation are mixed too finely for MapBiomas to resolve into a single class. The result is one stacked-area chart per territory, in hectares, covering the whole 1985–2025 series. Vertical dashed lines mark the FUNAI acts recorded for that territory: delimitation (indigo), declaration (amber) and homologation/ratification (purple). *Figure 6* arranges the ten panels in a 5 x 2 grid.
+We start by overlaying the ten delimited TI polygons downloaded from FUNAI's GeoServer with the MapBiomas collection 11 dataset, which classifies land use in 33 distinct classes. To keep the plots readable, we aggregated those 33 classes into the following eight groups: 
 
-![Land cover in the ten focus territories, 1985–2025](figures/mapbiomas_landcover_grid_5x2.png "FIGURE 6. Land cover inside the ten focus territories, 1985–2025. Each panel is a stacked area chart in hectares from MapBiomas Collection 11 (30 m annual). Colours follow the six groups used in the text plus water and pixels MapBiomas does not classify; the legend is in Portuguese. The black dashed line marks the year of the territory's first legal act in the FUNAI inventory, labelled with that act and the stage recorded in the 2026 inventory.")
+1. **Native vegetation**. It includes forest formation, floodable forest, savanna formation, flooded savanna, mangrove, wooded sandbank vegetation, grassland formation, herbaceous and shrub formation, wetland, salt marsh, herbaceous sandbank vegetation, hypersaline tidal flat and rocky outcrop.
 
-# Discussion 
+2. **Pasture**. Grassland used for grazing.
 
-Between 1985 and 2025, native vegetation fell in eight of the ten territories: 3,046 ha in Iguatemipegua I, 2,268 ha in Dourados-Amambaipeguá I, 2,105 ha in Sombrerito, 671 ha in Jatayvary, 647 ha in Potrero Guaçu, 595 ha in Ñande Ru Marangatu, 350 ha in Arroio Korá and 194 ha in Panambi–Lagoa Rica. The two exceptions, Guyraroká (+684 ha) and Taquara (+407 ha), gained native cover while losing pasture. That is consistent with regrowth on abandoned pasture.
+3. **Agriculture**. It includes soybean, sugar cane, rice, cotton, other temporary crops, coffee, citrus, palm oil and other perennial crops. Likely by commercial agribusiness operations, particularly large-scale mechanised cropping.
 
-Agriculture expanded in all ten, but the scale is uneven: 16 ha in Arroio Korá and 180 ha in Potrero Guaçu at one end, 39,735 ha in Dourados-Amambaipeguá I at the other. In four territories the gain tracks the pasture loss closely: Dourados-Amambaipeguá I (+36,616 ha agriculture, −36,589 ha pasture), Guyraroká (+6,134/−6,989), Panambi–Lagoa Rica (+2,779/−2,713) and Taquara (+7,197/−8,266). In Jatayvary the gain (+6,455 ha) is close to the combined pasture and mosaic loss (−3,008 and −2,932 ha). The pattern is the familiar Cerrado sequence: native cover cleared for pasture, then pasture renewed as cropland. 
+4. **Mosaic of uses**. Land where crop fields, pasture and residual native vegetation are mixed too finely for the 30 m resolution to resolve, typical of smallholder properties such as Indigenous communities.
 
-MapBiomas records land cover, not land user. The agriculture group in this analysis is a set of mechanized crop classes (soy, cane, rice, cotton and other annual and perennial crops), not a label of who farms. The inference that most of this area is non-indigenous commercial farming is strong where the community holds a small share of the polygon: Guyraroká 0.44%, Jatayvary 1.23% and Dourados-Amambaipeguá I 8.26%, against 71.5–73.9% agriculture. It is weaker where the community holds more land. It is also incomplete: indigenous and smallholder cultivation is small, mixed and often mapped as mosaic or removed by the 30 m spatial filter. 
+5. **Forest plantation**. Planted trees for commercial use, mostly eucalyptus and pine.
 
-In the 2008–2025 corpus, no CIMI report records a lease agreed by the community in any of the ten. The two lease records that touch them are leases of farms that the communities are retaking, not leases granted by the community: the Fazenda Ipuitã overlap in Guyraroká ([CIMI 2025](https://cimi.org.br/relatorioviolencia2025)) and the Fazenda Cleto Spessato overlap in Panambi–Lagoa Rica (CIMI 2024). The systematic case CIMI documents is the Dourados reserve, outside the ten, where the MPF estimated in 2010 that half the arable area was leased to non-indigenous farmers. CIMI describes the arrangement as coercive; it is not free community consent. Leasing is prohibited by [Lei 6.001/1973, art. 18](https://www.planalto.gov.br/ccivil_03/leis/l6001.htm), and acts of occupation or exploitation over indigenous land are null under [CF/1988, art. 231 §6](https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm), so consent does not make it lawful.
+6. **Other non-vegetated areas**. It includes beach, dune and sand, urban area, exposed soil, mining, photovoltaic plant, wind farm and any other non-vegetated surfaces.
 
-Homologation establishes the territory; titles and acts of occupation over it are null. The demarcation procedure is regulated by [Decreto 1.775/1996](https://www.planalto.gov.br/ccivil_03/decreto/d1775.htm), and removal of non-indigenous occupants is a separate administrative step. It did not stop agricultural expansion in Ñande Ru Marangatu. The territory was homologated in March 2005. MapBiomas records 38 ha of agriculture inside the polygon that year and 725 ha in 2025, a 19-fold increase (*Figure 5*). 
+7. **Water**. It includes river, lake, ocean and aquaculture.
 
-The two territories where the community holds most of the polygon look different. Arroio Korá (55.7% occupied) is 78% pasture, 12.5% mosaic, 8.6% native and 0.2% agriculture in 2025. Ñande Ru Marangatu (58.0%) is 35% pasture, 34% mosaic, 23% native and 8% agriculture. These are not crop landscapes. They are consistent with community cattle and small farming, but also with non-indigenous pasture on the 42–44% not occupied.
+8. **Unclassified**. Pixels MapBiomas does not classify.
 
-To conclude, three signals are worth reading together: 
-1. agriculture expanding inside a polygon after its legal stage; 
-2. the share of the polygon the community actually holds; and 
-3. the lease, invasion and damage records in CIMI. 
 
-A territory can be homologated and still lose land cover to crops; a territory can be 58% occupied and still have most of its area under pasture whose user is unknown. The 2026 wave of threats and attacks is the immediate political expression of a pressure that the land-cover series shows in slow motion.
+**Figure 5** shows the LULC change between 1985 and 2025 in the ten analysed Indigenous Territories. We observe that *native vegetation* reduced in eight of the ten territories, with two exceptions; Guyraroká and Taquara, where it increased by 684 ha and 407 ha, respectively. 
+
+*Agriculture* expanded substantially in eight territories, whereas *pasture* declined in all of them. In four territories, agricultural expansion was largely offset by pasture loss: Dourados-Amambaipeguá I (+36,616 ha agriculture, −36,589 ha pasture), Guyraroká (+6,134/−6,989), Panambi–Lagoa Rica (+2,779/−2,713) and Taquara (+7,197/−8,266). In Jatayvary, the agricultural gain (+6,455 ha) was similar to the combined decline in pasture and mosaic areas (−3,008 and −2,932 ha, respectively). This pattern is consistent with the [commonly observed pasture-to-crop conversion in the region](https://link.springer.com/article/10.1007/s44274-024-00150-1?).
+
+![Land use and land cover in the ten focus territories, 1985–2025](figures/mapbiomas_landcover_grid_5x2.png "FIGURE 5. Land use and land cover (LULC) inside the ten focus territories, 1985–2025. Each panel is a stacked area chart in hectares from MapBiomas Collection 11. Colours follow the eight groups used. The blue dashed line marks the year of the FUNAI's delimitation, the orange dashed line marks the year of the demarcation, and the continuous purple line marks the year of ratification.")
+
+# Discussion
+
+Explain what a company needs to do after declaration and ratification; when it becomes illegal to continue (and grow) their operations in the land, and when its bad-faith.
+
+MapBiomas identifies land cover, not ownership, tenure or who carries out the farming. The inference is stronger in territories where the communities occupy only a small fraction of the polygon. In Guyraroká, Iguatemipegua I and Dourados-Amambaipeguá I, the communities occupied between 0.24% and 8.26% of the delimited area in 2020, while agriculture expanded substantially across the full polygon. In those cases, the most plausible reading is that the cropland lies mainly in the area outside community occupation.
+
+The LULC analysis shows that agricultural expansion inside the territories keeps growing even after ratification cases. In 2005, when the Ñhanderu Marangatu territory was ratified, MapBiomas classified 38 ha of agricultural land. By 2025, that area recorded 725 ha. The territory therefore illustrates the gap between formal recognition of a boundary and effective control of the land inside it. While pasture had a significant decrease between 2005 and 2018, it increased again later. [ADD SENTENCE AND SOURCE OF LAND LEASE IN NHANDERU MARANGATU]
+
+Furthermore, Indigenous lands cannot lawfully be leased to non-Indigenous people under Article 18 of the Statute of Indigenous Peoples, and Article 231, §6 of the Constitution declares void acts of occupation or exploitation of Indigenous land. Consent would not make such an arrangement lawful. In Dourados, a territory outside the ten territories analysed here, the federal public prosecutor’s office estimated in 2010 that about half the arable area was leased to non-Indigenous farmers, and CIMI characterises the arrangement as coercive rather than freely agreed.
+
+The LULC data cannot identify responsibility for each hectare. But it does show that legal status alone has not prevented agricultural conversion inside Indigenous territories. It also shows that territories with large agricultural land face extreme slowness in their legal processes, with many territories being demarcated for over two decades while still waiting to be ratified. Where communities hold little of the polygon, crop expansion is more likely to reflect land controlled by others; where they hold most of it, pasture and mosaic uses dominate. The 2026 threats and attacks are the acute political expression of a conflict that the LULC record shows developing over decades.
+
 
 # Resources
 
-- Lopes, N. (2026, November 1). _Ataque a indígenas em MS: o que se sabe sobre ameaças de envenenamento da água em aldeia_. G1. https://g1.globo.com/ms/mato-grosso-do-sul/noticia/2026/11/01/ataque-a-indigenas-em-ms-o-que-se-sabe-sobre-ameacas-de-envenenamento-da-agua-em-aldeia.ghtml
-- Machado, M. (2026, October 30). _Força Nacional faz patrulhamento em aldeias indígenas de MS após ameaças de envenenamento da água_. G1. https://g1.globo.com/ms/mato-grosso-do-sul/noticia/2026/10/30/forca-nacional-faz-patrulhamento-em-aldeias-indigenas-de-ms-apos-ameacas-de-envenenamento-da-agua.ghtml
-- Balduino, I. (2026, October 29). _Indígenas de MS denunciam casos de violência e ameaças após eleição_. Agência Brasil. https://agenciabrasil.ebc.com.br/direitos-humanos/noticia/2026-10/indigenas-de-ms-denunciam-casos-de-violencia-e-ameacas-apos-eleicao
-- Passos, G. (2026, October 30). _MS: indígenas denunciam ameaças e violência após resultado de eleição_. Radioagência Nacional. https://agenciabrasil.ebc.com.br/radioagencia-nacional/direitos-humanos/audio/2026-10/ms-indigenas-denunciam-ameacas-e-violencia-apos-resultado-de-eleicao
-- Agência Brasil. (2026, October 30). _Governo cria força-tarefa para apurar ataques a indígenas no MS_. Poder360. https://www.poder360.com.br/poder-brasil/governo-cria-forca-tarefa-para-apurar-ataques-a-indigenas-no-ms/
-- Procuradoria da República em Mato Grosso do Sul. (2026, October 28). _MPF abre investigações sobre onda de violência e ataques contra comunidades indígenas em Mato Grosso do Sul_. Ministério Público Federal. https://www.mpf.mp.br/o-mpf/unidades/pr-ms/noticias/mpf-abre-investigacoes-sobre-onda-de-violencia-e-ataques-contra-comunidades-indigenas-em-mato-grosso-do-sul
-- Cimi – Conselho Indigenista Missionário. (2013, April 8). _Documento final do 4º Aty Guasu das Mulheres Guarani e Kaiowá_. https://cimi.org.br/2013/04/34598/
-- Comissão Pastoral da Terra. (2017, January 12). _Indígenas estão ameaçados de despejo em Dourados (MS)_. https://cptnacional.org.br/2017/01/12/indigenas-estao-ameacados-de-despejo-em-dourados-ms
-- Ministério Público Federal. (2014, August 22). _Após 13 anos, liminar é cassada e demarcação de terra indígena prossegue_. Republished by MST. https://mst.org.br/2014/08/22/apos-13-anos-liminar-e-cassada-e-demarcacao-de-terra-indigena-prossegue
-- Dourados Agora. (2026, October 26). _Vereador defende compra de propriedades pela União para negociar conflito em Dourados_. https://www.douradosagora.com.br/noticias/politica/vereador-defende-compra-de-propriedades-pela-uniao-para-negociar-conflito-em-dourados
-- Cimi – Conselho Indigenista Missionário. (2025). _Violência contra os povos indígenas no Brasil: Relatório 2025_. https://cimi.org.br/relatorioviolencia2025
-- Fundação Nacional dos Povos Indígenas. (n.d.). _Funai_. https://www.gov.br/funai
-- Fundação Nacional dos Povos Indígenas. (n.d.). _Terras Indígenas – polígonos por portarias (layer Funai:tis_poligonais_portarias)_. Geoserver Funai, WFS request filtered to Mato Grosso do Sul. https://geoserver.funai.gov.br/geoserver/Funai/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=Funai:tis_poligonais_portarias&outputFormat=application/json&srsName=EPSG:4674&CQL_FILTER=uf_sigla%3D%27MS%27
-- MapBiomas. (2025). _Coleções MapBiomas: Collection 11 of annual land cover and land use maps of Brazil (1985–2025)_. https://brasil.mapbiomas.org/colecoes-mapbiomas
-- Soberana Sensing. (n.d.). _Soberana Land Rights Monitor: CIMI pipeline_. GitHub. https://github.com/Soberana-Sensing/soberana-land-rights-monitor/tree/main/cimi
+- Agência Brasil. (2026, October 30). Governo cria força-tarefa para apurar ataques a indígenas no MS. Poder360 (republished from Agência Brasil). https://www.poder360.com.br/poder-brasil/governo-cria-forca-tarefa-para-apurar-ataques-a-indigenas-no-ms/
+- Balduino, I. (2026, October 29). Indígenas de MS denunciam casos de violência e ameaças após eleição. Agência Brasil. https://agenciabrasil.ebc.com.br/direitos-humanos/noticia/2026-10/indigenas-de-ms-denunciam-casos-de-violencia-e-ameacas-apos-eleicao
+- Brasil. (1988). _Constituição da República Federativa do Brasil de 1988, art. 231_. https://normas.leg.br/?urn=urn:lex:br:federal:constituicao:1988-10-05;1988!art231
+- Brasil. (1973, December 19). Lei nº 6.001, de 19 de dezembro de 1973 – Estatuto do Índio, art. 18_. https://www.planalto.gov.br/ccivil03/leis/l6001.htm
+- Cimi – Conselho Indigenista Missionário. (n.d.). Violência contra os povos indígenas no Brasil: edições anteriores (2009–2026). https://cimi.org.br/observatorio-da-violencia/edicoes-anteriores/
+- Fundação Nacional dos Povos Indígenas. (n.d.). Fases do processo administrativo de demarcação de terras indígenas. https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/demarcacao-de-terras-indigenas/fases-do-processo-administrativo
+- Fundação Nacional dos Povos Indígenas. (n.d.). Terras Indígenas – polígonos por portarias (layer Funai:tis_poligonais_portarias). GeoServer Funai, WFS request filtered to Mato Grosso do Sul, retrieved 12 November 2026. https://geoserver.funai.gov.br/geoserver/Funai/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=Funai:tis_poligonais_portarias&outputFormat=application/json&srsName=EPSG:4674&CQL_FILTER=uf_sigla%3D%27MS%27
+- Lopes, N. (2026, November 1). Ataque a indígenas em MS: o que se sabe sobre ameaças de envenenamento da água em aldeia. G1. https://g1.globo.com/ms/mato-grosso-do-sul/noticia/2026/11/01/ataque-a-indigenas-em-ms-o-que-se-sabe-sobre-ameacas-de-envenenamento-da-agua-em-aldeia.ghtml
+- Machado, M. (2026, October 30). Força Nacional faz patrulhamento em aldeias indígenas de MS após ameaças de envenenamento da água. G1. https://g1.globo.com/ms/mato-grosso-do-sul/noticia/2026/10/30/forca-nacional-faz-patrulhamento-em-aldeias-indigenas-de-ms-apos-ameacas-de-envenenamento-da-agua.ghtml
+- MapBiomas. (2025). Coleções MapBiomas: Collection 11 of annual land cover and land use maps of Brazil (1985–2025). https://brasil.mapbiomas.org/colecoes-mapbiomas
+- Müller et al. (2024), Devastation of the Cerrado of Mato Grosso do Sul and the advance of agriculture. https://link.springer.com/article/10.1007/s44274-024-00150-1?
+- Passos, G. (2026, October 30). MS: indígenas denunciam ameaças e violência após resultado de eleição. Radioagência Nacional. https://agenciabrasil.ebc.com.br/radioagencia-nacional/direitos-humanos/audio/2026-10/ms-indigenas-denunciam-ameacas-e-violencia-apos-resultado-de-eleicao
+- Procuradoria da República em Mato Grosso do Sul. (2026, October 28). MPF abre investigações sobre onda de violência e ataques contra comunidades indígenas em Mato Grosso do Sul. Ministério Público Federal. https://www.mpf.mp.br/o-mpf/unidades/pr-ms/noticias/mpf-abre-investigacoes-sobre-onda-de-violencia-e-ataques-contra-comunidades-indigenas-em-mato-grosso-do-sul
+- Soberana Sensing. (n.d.). Soberana Land Rights Monitor: CIMI pipeline. GitHub. https://github.com/Soberana-Sensing/soberana-land-rights-monitor/tree/main/cimi
