@@ -1,6 +1,6 @@
 ---
 published: 2026-10-06
-title: Decolonizing Africa’s Economy: Cooperation for Sovereignty
+title: Liberating Africa’s Economy: Cooperation for Sovereignty
 excerpt: Economic sovereignty is a precondition for African liberation. A short analysis on how liberating Africa will liberate the world.
 tags: [article, political-economy, sovereignty]
 ---
