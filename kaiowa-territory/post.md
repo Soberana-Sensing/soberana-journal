@@ -101,6 +101,8 @@ The analysis establishes three points. First, prolonged administrative delay has
 
 The 2026 wave of threats and attacks is not an aberration, nor merely a post-election escalation. It is the acute political expression of a structural conflict that has been allowed to persist for decades: territories formally delimited but left unratified, communities confined to a fraction of the land they are entitled to occupy, and agricultural and pastoral production continuing across territories whose original inhabitants remain dispossessed. Therefore, legal recognition without effective possession does not end dispossession. It leaves communities exposed to the interests that profit from the land they are struggling to recover. Addressing this requires more than condemning individual attacks; it requires completing demarcation, enforcing Indigenous territorial rights, removing the conditions that allow external land use to persist, and treating Guarani-Kaiowá communities as rights-holders with authority over their territories and not as obstacles to profit-driven agricultural expansion.
 
+![note] If you would like to contribute to this journal, please visit [github.com/Soberana-Sensing/soberana-journal](https://github.com/Soberana-Sensing/soberana-journal) and open a pull request. We are happy to collaborate!
+
 # Resources
 
 - Agência Brasil. (2026, October 30). *MS: indígenas denunciam ameaças e violência após resultado de eleição*. Radioagência Nacional. https://agenciabrasil.ebc.com.br/radioagencia-nacional/direitos-humanos/audio/2026-10/ms-indigenas-denunciam-ameacas-e-violencia-apos-resultado-de-eleicao
